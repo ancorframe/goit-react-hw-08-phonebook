@@ -38,7 +38,11 @@ export const SingUpForm = () => {
     initialValues,
     validationSchema: validationSchema,
     onSubmit: values => {
-      dispatch(register(values));
+      dispatch(register(values))
+        .unwrap()
+        .then(originalPromiseResult => {
+          // handle result here
+        });
     },
   });
 

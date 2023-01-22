@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import {
   addContact,
   deleteContactById,
@@ -16,6 +16,7 @@ const extraActions = [
   updateContactById,
   updateFavoriteById,
 ];
+
 
 const getActions = type => isAnyOf(...extraActions.map(action => action[type]));
 
