@@ -1,10 +1,12 @@
 import { Box } from 'components/Box';
-import { useStatus } from 'Redux/Selectors';
+import { getStatus } from 'redux/selectors';
 import { ButtonLink } from './AppBar.styled';
 import { UserMenu } from '../UserMenu/UserMenu';
+import { useSelector } from 'react-redux';
 
 export const AppBar = () => {
-  const { isLoggedIn } = useStatus();
+   const isLoggedIn = useSelector(getStatus);
+
 
   return (
     <Box as="header" borderBottom="normal" mb={3}>

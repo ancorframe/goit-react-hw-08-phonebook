@@ -12,7 +12,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import { nanoid } from 'nanoid';
 import { useFormik } from 'formik';
 import { ToastContainer, toast } from 'react-toastify';
-import { useGetContactQuery, useCreateContactMutation } from 'API/contactsApi';
+import { getAllContacts } from 'redux/selectors';
+import { addContact } from 'redux/contactsApi';
+import { useDispatch, useSelector } from 'react-redux';
 
 const phoneRegExp =
   /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/;
@@ -22,7 +24,10 @@ const schema = Yup.object().shape({
     .min(2, 'Too Short!')
     .max(20, 'Too Long!')
     .required('Required'),
-  number: Yup.string()
+  email: Yup.string('Enter your email')
+    .email('Enter a valid email')
+    .required('Email is required'),
+  phone: Yup.string()
     .matches(phoneRegExp, 'Phone number is not valid')
     .min(13, 'Too Short!')
     .max(13, 'Too Long!')
@@ -37,31 +42,31 @@ export const ContactForm = () => {
 
   const nameId = nanoid();
   const numberId = nanoid();
-  const { data } = useGetContactQuery();
-  const [addContact] = useCreateContactMutation();
+  const emailId = nanoid();
+
+  const contacts = useSelector(getAllContacts);
+  const dispatch = useDispatch();
 
   const initialValues = {
     name: '',
-    number: '',
+    email: '',
+    phone: '',
   };
 
   const formik = useFormik({
     initialValues,
     validationSchema: schema,
     onSubmit: values => {
-      if (data.find(i => i.name.toLowerCase() === values.name.toLowerCase())) {
+      if (
+        contacts.find(
+          contact => contact.name.toLowerCase() === values.name.toLowerCase()
+        )
+      ) {
         return notify(`${values.name} is already in contacts.`);
       }
-      addContact(values)
-        .unwrap()
-        .then(({ name }) => {
-          notify(`${name} was added`);
-          formik.resetForm();
-        })
-        .catch(({ error }) => notify(`${error}`));
+      dispatch(addContact(values));
     },
   });
-
 
   return (
     <>
@@ -93,6 +98,18 @@ export const ContactForm = () => {
               onChange={formik.handleChange}
               error={formik.touched.name && Boolean(formik.errors.name)}
               helperText={formik.touched.name && formik.errors.name}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id={emailId}
+              name="email"
+              label="Email"
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              error={formik.touched.email && Boolean(formik.errors.email)}
+              helperText={formik.touched.email && formik.errors.email}
             />
             <TextField
               margin="normal"

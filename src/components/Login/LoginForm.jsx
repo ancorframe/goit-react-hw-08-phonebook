@@ -3,9 +3,10 @@ import TextField from '@mui/material/TextField';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { Box } from 'components/Box';
-import { useLoginMutation } from 'API/authApi';
+// import { useLoginMutation } from 'redux/authApi';
 import { useDispatch } from 'react-redux';
-import { updateToken, updateUser, updateStatus } from '../../Redux/authSlice';
+import { login } from 'redux/authApi';
+// import { updateToken, updateUser, updateStatus } from '../../redux/authSlice';
 
 const validationSchema = Yup.object().shape({
   email: Yup.string('Enter your email')
@@ -17,7 +18,7 @@ const validationSchema = Yup.object().shape({
 });
 
 export const LoginForm = () => {
-  const [login] = useLoginMutation();
+  // const [login] = useLoginMutation();
   const dispatch = useDispatch();
 
   const initialValues = {
@@ -29,16 +30,8 @@ export const LoginForm = () => {
     initialValues,
     validationSchema: validationSchema,
     onSubmit: values => {
-      login(values)
-        .unwrap()
-        .then(response => {
-          dispatch(updateToken(response.token));
-          dispatch(updateUser(response.user));
-          dispatch(updateStatus(true));
-        })
-        .catch(error => {
-          console.log(error);
-        });
+      dispatch(login(values));
+      
     },
   });
 

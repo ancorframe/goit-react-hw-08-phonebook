@@ -3,20 +3,20 @@ import 'react-toastify/dist/ReactToastify.css';
 import Fab from '@mui/material/Fab';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { toast } from 'react-toastify';
+// import { toast } from 'react-toastify';
 import { Box } from 'components/Box';
 import { useEffect, useState } from 'react';
 import { Modal } from 'components/Modal/Modal';
-import { useDeleteContactMutation } from 'API/contactsApi';
+// import { useDeleteContactMutation } from 'redux/contactsApi';
 import { EditingForm } from './EditingForm';
 
 export const ContactItem = ({ contact }) => {
-  const notify = e =>
-    toast.success(e, {
-      theme: 'dark',
-    });
+  // const notify = e =>
+  //   toast.success(e, {
+  //     theme: 'dark',
+  //   });
 
-  const [deleteContact, { isLoading }] = useDeleteContactMutation();
+  // const [deleteContact, { isLoading }] = useDeleteContactMutation();
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
@@ -31,10 +31,11 @@ export const ContactItem = ({ contact }) => {
   });
 
   const handleDelete = e => {
-    deleteContact(e.currentTarget.id)
-      .unwrap()
-      .then(({ name }) => notify(`${name} was deleted`))
-      .catch(({ error }) => notify(`${error}`));
+    // deleteContact(e.currentTarget.id)
+    //   .unwrap()
+    //   .then(({ name }) => notify(`${name} was deleted`))
+    //   .catch(({ error }) => notify(`${error}`));
+    
   };
 
   const onEsc = e => {
@@ -67,7 +68,7 @@ export const ContactItem = ({ contact }) => {
           alignItems="center"
         >
           <span>{contact.name}</span>
-          <span>{contact.number}</span>
+          <span>{contact.phone}</span>
         </Box>
         <Fab color="secondary" aria-label="edit" size="small" onClick={onOpen}>
           <EditIcon />
@@ -78,7 +79,7 @@ export const ContactItem = ({ contact }) => {
           type="button"
           id={contact.id}
           onClick={handleDelete}
-          disabled={isLoading}
+          // disabled={isLoading}
           size="small"
         >
           <DeleteIcon />

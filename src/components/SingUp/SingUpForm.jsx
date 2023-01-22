@@ -3,12 +3,13 @@ import TextField from '@mui/material/TextField';
 import * as Yup from 'yup';
 import { Box } from 'components/Box';
 import { useFormik } from 'formik';
-import { useSignupMutation } from 'API/authApi';
+// import { useSignupMutation } from 'redux/authApi';
 import { useDispatch } from 'react-redux';
-import { updateToken} from '../../Redux/authSlice';
+// import { updateToken } from '../../redux/authSlice';
+import { register } from 'redux/authApi';
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string('Enter your name').required('name is required'),
+  // name: Yup.string('Enter your name').required('name is required'),
   email: Yup.string('Enter your email')
     .email('Enter a valid email')
     .required('Email is required'),
@@ -18,11 +19,17 @@ const validationSchema = Yup.object().shape({
 });
 
 export const SingUpForm = () => {
-  const [singup] = useSignupMutation();
+  // const [singup] = useSignupMutation();
   const dispatch = useDispatch();
-  
+
+// useEffect(() => {
+//   // const contoller = new AbortController();
+//   dispatch(fetchWords(contoller.signal));
+//   return () => contoller.abort();
+// }, [dispatch]);
+
   const initialValues = {
-    name: '',
+    // name: '',
     email: '',
     password: '',
   };
@@ -31,21 +38,14 @@ export const SingUpForm = () => {
     initialValues,
     validationSchema: validationSchema,
     onSubmit: values => {
-      singup(values)
-        .unwrap()
-        .then(response => {
-          dispatch(updateToken(response.token));
-        })
-        .catch(error => {
-          console.log(error);
-        });
+      dispatch(register(values));
     },
   });
 
   return (
     <>
       <Box as="form" onSubmit={formik.handleSubmit} sx={{ mt: 1 }}>
-        <TextField
+        {/* <TextField
           margin="normal"
           fullWidth
           required
@@ -56,7 +56,7 @@ export const SingUpForm = () => {
           onChange={formik.handleChange}
           error={formik.touched.name && Boolean(formik.errors.name)}
           helperText={formik.touched.name && formik.errors.name}
-        />
+        /> */}
         <TextField
           margin="normal"
           fullWidth

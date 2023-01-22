@@ -1,15 +1,20 @@
 import Typography from '@mui/material/Typography';
 import { ContactItem } from './ContactItem';
-import { useFilter } from 'Redux/Selectors';
-import { filterByName } from 'Helpers/filterByName';
+import {
+  getAllContacts,
+  getFilteredContacts,
+  getIsLoading,
+} from 'redux/selectors';
+
 import { Box } from 'components/Box';
-import { useGetContactQuery } from 'API/contactsApi';
+
 import { SpinnerLoader } from 'components/SpinnerLoader/SpinnerLoader';
+import { useSelector } from 'react-redux';
 
 export const ContactList = () => {
-  const { data, isLoading, isSuccess } = useGetContactQuery();
-  const { filter } = useFilter();
-  const filterContacts = filterByName(data ? data : [], filter);
+  const allContacts = useSelector(getAllContacts);
+  const filteredContacts = useSelector(getFilteredContacts);
+  const isLoading = useSelector(getIsLoading);
 
   if (isLoading) {
     return (
@@ -19,7 +24,7 @@ export const ContactList = () => {
     );
   }
 
-  if (isSuccess && data.length === 0) {
+  if (allContacts.length === 0) {
     return (
       <Typography component="h1" variant="h5" textAlign="center">
         No contacts (
@@ -27,7 +32,7 @@ export const ContactList = () => {
     );
   }
 
-  if (filterContacts.length === 0) {
+  if (filteredContacts.length === 0) {
     return (
       <Typography component="h1" variant="h5" textAlign="center">
         No contacts with this name(
@@ -42,7 +47,7 @@ export const ContactList = () => {
       alignItems="center"
       gridGap={3}
     >
-      {filterContacts.map(item => {
+      {filteredContacts.map(item => {
         return (
           <li key={item.id}>
             <ContactItem contact={item} />

@@ -1,4 +1,4 @@
-import filterSlice from './FilterSlice';
+import filterSlice from './filterSlice';
 import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import {
@@ -10,26 +10,22 @@ import {
   PURGE,
   REGISTER,
 } from 'redux-persist';
-import { authApi } from 'API/authApi';
-import { authReducer } from './authSlice';
-import { contactsApi } from 'API/contactsApi';
 
+import { authReducer } from './authSlice';
+import { contactsReducer } from './contactsSlice';
 
 export const store = configureStore({
   reducer: {
-    [authApi.reducerPath]: authApi.reducer,
-    [contactsApi.reducerPath]: contactsApi.reducer,
-    filter: filterSlice,
     auth: authReducer,
+    filter: filterSlice,
+    contacts: contactsReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    })
-      .concat(authApi.middleware)
-      .concat(contactsApi.middleware),
+    }),
 });
 
 setupListeners(store.dispatch);

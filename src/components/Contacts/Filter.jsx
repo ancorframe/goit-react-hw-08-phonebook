@@ -6,17 +6,16 @@ import Typography from '@mui/material/Typography';
 import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { useDispatch } from 'react-redux';
-import { update } from 'Redux/FilterSlice';
-import { useFilter } from 'Redux/Selectors';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { update } from 'redux/filterSlice';
+import { getFilter } from 'redux/selectors';
 
 export const Filter = () => {
   const dispatch = useDispatch();
-  const { filter } = useFilter();
+  const filter = useSelector(getFilter);
 
   const onChange = e => {
-    const value = e.target.value.toLowerCase().trim();
+    const value = e.target.value.trim();
     dispatch(update(value));
   };
 
@@ -48,9 +47,6 @@ export const Filter = () => {
           />
         </Box>
       </Container>
-
-      {/* <p>Find contact by name</p>
-      <input type="text" name="filter" value={filter} onChange={onChange} /> */}
     </>
   );
 };

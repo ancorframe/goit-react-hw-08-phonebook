@@ -12,8 +12,10 @@ import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import 'react-toastify/dist/ReactToastify.css';
 import { nanoid } from 'nanoid';
 import { useFormik } from 'formik';
-import { ToastContainer, toast } from 'react-toastify';
-import { useUpdateContactMutation } from 'API/contactsApi';
+// import { ToastContainer, toast } from 'react-toastify';
+import { useDispatch } from 'react-redux';
+import { updateContactById } from 'redux/contactsApi';
+
 
 const phoneRegExp =
   /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/;
@@ -23,7 +25,10 @@ const schema = Yup.object().shape({
     .min(2, 'Too Short!')
     .max(20, 'Too Long!')
     .required('Required'),
-  number: Yup.string()
+  email: Yup.string('Enter your email')
+    .email('Enter a valid email')
+    .required('Email is required'),
+  phone: Yup.string()
     .matches(phoneRegExp, 'Phone number is not valid')
     .min(13, 'Too Short!')
     .max(13, 'Too Long!')
@@ -32,31 +37,29 @@ const schema = Yup.object().shape({
 
 export const EditingForm = ({ value, close }) => {
   const id = value.id;
-  const notify = text =>
-    toast.success(`${text}`, {
-      theme: 'dark',
-    });
+  // const notify = text =>
+  //   toast.success(`${text}`, {
+  //     theme: 'dark',
+  //   });
 
   const nameId = nanoid();
   const numberId = nanoid();
-  const [updateContact] = useUpdateContactMutation();
+  const emailId = nanoid();
+    const dispatch = useDispatch();
+
+
 
   const formik = useFormik({
     initialValues: {
       name: value.name,
-      number: value.number,
+      email: value.email,
+      phone: value.phone,
     },
     validationSchema: schema,
     onSubmit: values => {
       const requestValue = { ...values, id };
-      updateContact(requestValue)
-        .unwrap()
-        .then(({ name }) => {
-          notify(`${name} was updated`);
-          close();
-        })
-        .catch(({ error }) => notify(`${error}`));
-    },
+    dispatch(updateContactById(requestValue));
+    }
   });
 
   return (
@@ -95,16 +98,28 @@ export const EditingForm = ({ value, close }) => {
             />
             <TextField
               margin="normal"
+              required
+              fullWidth
+              id={emailId}
+              name="email"
+              label="Email"
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              error={formik.touched.email && Boolean(formik.errors.email)}
+              helperText={formik.touched.email && formik.errors.email}
+            />
+            <TextField
+              margin="normal"
               fullWidth
               required
               id={numberId}
-              name="number"
-              label="Number"
+              name="phone"
+              label="Phone"
               type="tel"
-              value={formik.values.number}
+              value={formik.values.phone}
               onChange={formik.handleChange}
-              error={formik.touched.number && Boolean(formik.errors.number)}
-              helperText={formik.touched.number && formik.errors.number}
+              error={formik.touched.phone && Boolean(formik.errors.phone)}
+              helperText={formik.touched.phone && formik.errors.phone}
             />
             <Button
               color="primary"
@@ -118,12 +133,12 @@ export const EditingForm = ({ value, close }) => {
           </Box>
         </Box>
       </Container>
-      <ToastContainer />
+      {/* <ToastContainer /> */}
     </>
   );
 };
 
 EditingForm.propTypes = {
   close: PropTypes.func.isRequired,
-  value: PropTypes.object.isRequired
+  value: PropTypes.object.isRequired,
 };
