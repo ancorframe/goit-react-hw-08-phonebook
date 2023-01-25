@@ -9,12 +9,11 @@ import { getContacts } from 'redux/contactsApi';
 export const ContactsPage = () => {
   const dispatch = useDispatch();
 
-
- useEffect(() => {
-   const contoller = new AbortController();
-   dispatch(getContacts(contoller.signal));
-   return () => contoller.abort();
- }, [dispatch]);
+  useEffect(() => {
+    const contoller = new AbortController();
+    dispatch(getContacts(contoller.signal));
+    return () => contoller.abort();
+  }, [dispatch]);
 
   return (
     <Box

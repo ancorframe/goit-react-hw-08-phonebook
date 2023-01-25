@@ -5,9 +5,7 @@ import {
   getFilteredContacts,
   getIsLoading,
 } from 'redux/selectors';
-
 import { Box } from 'components/Box';
-
 import { SpinnerLoader } from 'components/SpinnerLoader/SpinnerLoader';
 import { useSelector } from 'react-redux';
 
@@ -49,7 +47,7 @@ export const ContactList = () => {
     >
       {filteredContacts.map(item => {
         return (
-          <li key={item.id}>
+          <li key={item._id}>
             <ContactItem contact={item} />
           </li>
         );

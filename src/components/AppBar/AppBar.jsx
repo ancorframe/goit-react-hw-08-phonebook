@@ -3,6 +3,9 @@ import { getStatus } from 'redux/selectors';
 import { ButtonLink } from './AppBar.styled';
 import { UserMenu } from '../UserMenu/UserMenu';
 import { useSelector } from 'react-redux';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 export const AppBar = () => {
    const isLoggedIn = useSelector(getStatus);
@@ -21,6 +24,7 @@ export const AppBar = () => {
 
         {isLoggedIn && <UserMenu />}
       </Box>
+      <ToastContainer/>
     </Box>
   );
 };

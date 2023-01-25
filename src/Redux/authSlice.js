@@ -16,11 +16,7 @@ const extraActions = [
 
 const getActions = type => isAnyOf(...extraActions.map(action => action[type]));
 
-const registerReducer = (state, action) => {
-  state.user = action.payload.user;
-  state.token = action.payload.token;
-  state.isLoggedIn = true;
-};
+const registerReducer = (state, action) => {};
 
 const loginReducer = (state, action) => {
   state.user = action.payload.user;
@@ -73,6 +69,7 @@ const initialState = {
   },
   token: null,
   isLoggedIn: false,
+  isLoading:false,
   error: null,
 };
 

@@ -12,10 +12,9 @@ import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import 'react-toastify/dist/ReactToastify.css';
 import { nanoid } from 'nanoid';
 import { useFormik } from 'formik';
-// import { ToastContainer, toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { updateContactById } from 'redux/contactsApi';
-
+import { notifyError, notifySuccess } from 'Helpers/notify';
 
 const phoneRegExp =
   /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/;
@@ -36,18 +35,11 @@ const schema = Yup.object().shape({
 });
 
 export const EditingForm = ({ value, close }) => {
-  const id = value.id;
-  // const notify = text =>
-  //   toast.success(`${text}`, {
-  //     theme: 'dark',
-  //   });
-
+  const { _id: id } = value;
   const nameId = nanoid();
   const numberId = nanoid();
   const emailId = nanoid();
-    const dispatch = useDispatch();
-
-
+  const dispatch = useDispatch();
 
   const formik = useFormik({
     initialValues: {
@@ -57,9 +49,12 @@ export const EditingForm = ({ value, close }) => {
     },
     validationSchema: schema,
     onSubmit: values => {
-      const requestValue = { ...values, id };
-    dispatch(updateContactById(requestValue));
-    }
+      dispatch(updateContactById({ values, id }))
+        .unwrap()
+        .then(() => notifySuccess(`Contact modified`))
+        .catch(error => notifyError(`${error}`));
+      close();
+    },
   });
 
   return (
@@ -133,7 +128,6 @@ export const EditingForm = ({ value, close }) => {
           </Box>
         </Box>
       </Container>
-      {/* <ToastContainer /> */}
     </>
   );
 };

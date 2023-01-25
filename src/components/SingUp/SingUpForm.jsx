@@ -7,6 +7,8 @@ import { useFormik } from 'formik';
 import { useDispatch } from 'react-redux';
 // import { updateToken } from '../../redux/authSlice';
 import { register } from 'redux/authApi';
+import { toast } from 'react-toastify';
+
 
 const validationSchema = Yup.object().shape({
   // name: Yup.string('Enter your name').required('name is required'),
@@ -19,14 +21,13 @@ const validationSchema = Yup.object().shape({
 });
 
 export const SingUpForm = () => {
-  // const [singup] = useSignupMutation();
+  // const [verify, setVerify] = useState(null);
+  const notify = text =>
+    toast.success(`${text}`, {
+      theme: 'dark',
+    });
   const dispatch = useDispatch();
-
-// useEffect(() => {
-//   // const contoller = new AbortController();
-//   dispatch(fetchWords(contoller.signal));
-//   return () => contoller.abort();
-// }, [dispatch]);
+  const controller = new AbortController();
 
   const initialValues = {
     // name: '',
@@ -38,18 +39,26 @@ export const SingUpForm = () => {
     initialValues,
     validationSchema: validationSchema,
     onSubmit: values => {
-      dispatch(register(values))
+      dispatch(register(values, controller))
         .unwrap()
         .then(originalPromiseResult => {
+          console.log(originalPromiseResult);
+          notify('check your email to verify');
+          // setVerify(true);
           // handle result here
         });
     },
   });
 
+  //   if (cancellSignal) {
+  //   controller.abort();
+  // }
+
   return (
     <>
-      <Box as="form" onSubmit={formik.handleSubmit} sx={{ mt: 1 }}>
-        {/* <TextField
+  
+        <Box as="form" onSubmit={formik.handleSubmit} sx={{ mt: 1 }}>
+          {/* <TextField
           margin="normal"
           fullWidth
           required
@@ -61,40 +70,41 @@ export const SingUpForm = () => {
           error={formik.touched.name && Boolean(formik.errors.name)}
           helperText={formik.touched.name && formik.errors.name}
         /> */}
-        <TextField
-          margin="normal"
-          fullWidth
-          required
-          id="email"
-          name="email"
-          label="Email"
-          value={formik.values.email}
-          onChange={formik.handleChange}
-          error={formik.touched.email && Boolean(formik.errors.email)}
-          helperText={formik.touched.email && formik.errors.email}
-        />
-        <TextField
-          margin="normal"
-          fullWidth
-          required
-          id="password"
-          name="password"
-          label="Password"
-          type="password"
-          value={formik.values.password}
-          onChange={formik.handleChange}
-          error={formik.touched.password && Boolean(formik.errors.password)}
-          helperText={formik.touched.password && formik.errors.password}
-        />
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          sx={{ mt: 3, mb: 2 }}
-        >
-          Register
-        </Button>
-      </Box>
+          <TextField
+            margin="normal"
+            fullWidth
+            required
+            id="email"
+            name="email"
+            label="Email"
+            value={formik.values.email}
+            onChange={formik.handleChange}
+            error={formik.touched.email && Boolean(formik.errors.email)}
+            helperText={formik.touched.email && formik.errors.email}
+          />
+          <TextField
+            margin="normal"
+            fullWidth
+            required
+            id="password"
+            name="password"
+            label="Password"
+            type="password"
+            value={formik.values.password}
+            onChange={formik.handleChange}
+            error={formik.touched.password && Boolean(formik.errors.password)}
+            helperText={formik.touched.password && formik.errors.password}
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            Register
+          </Button>
+        </Box>
+
     </>
   );
 };

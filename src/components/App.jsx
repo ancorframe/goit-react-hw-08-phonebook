@@ -3,15 +3,13 @@ import { lazy, useEffect } from 'react';
 import { Box } from './Box';
 import { Layout } from './Layout';
 import { NotFoundPage } from 'pages/NotFoundPage';
-// import { useGetCurrentMutation } from 'redux/authApi';
 import { useDispatch, useSelector } from 'react-redux';
-// import { updateUser, updateStatus } from 'redux/authSlice';
-// import { useToken } from '../redux/selectors';
 import { PrivateRoute } from 'Helpers/PrivateRoute';
 import { RestrictedRoute } from 'Helpers/PublicRoute';
 import { SpinnerLoader } from './SpinnerLoader/SpinnerLoader';
-import {  getToken } from 'redux/selectors';
+import { getAuthIsLoading, getToken } from 'redux/selectors';
 import { getCurrent } from 'redux/authApi';
+import { notifyError } from 'Helpers/notify';
 
 const SingUpPage = lazy(() =>
   import('../pages/SingUpPage').then(module => ({
@@ -31,20 +29,23 @@ const ContactsPage = lazy(() =>
 
 export const App = () => {
   const dispatch = useDispatch();
-    // const isLoggedIn = useSelector(getStatus);
-const token = useSelector(getToken)
-
-
+  const token = useSelector(getToken);
+  const isLoading = useSelector(getAuthIsLoading);
 
   useEffect(() => {
+    const contoller = new AbortController();
     if (token) {
-      dispatch(getCurrent);
+      dispatch(getCurrent(contoller.signal))
+        .unwrap()
+        .then()
+        .catch(error => notifyError(`${error}`));
     }
+    return () => contoller.abort();
   }, [dispatch, token]);
 
   return (
     <>
-      {/* {!isLoading ? ( */}
+      {!isLoading ? (
         <Box px={3}>
           <Routes>
             <Route path="/" element={<Layout />}>
@@ -80,7 +81,7 @@ const token = useSelector(getToken)
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Box>
-      {/* ) : ( */}
+      ) : (
         <Box
           as="main"
           display="flex"
@@ -91,7 +92,7 @@ const token = useSelector(getToken)
         >
           <SpinnerLoader />
         </Box>
-      {/* )} */}
+      )}
     </>
   );
 };

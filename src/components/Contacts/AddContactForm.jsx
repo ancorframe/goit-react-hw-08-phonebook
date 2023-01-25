@@ -11,10 +11,11 @@ import Box from '@mui/material/Box';
 import 'react-toastify/dist/ReactToastify.css';
 import { nanoid } from 'nanoid';
 import { useFormik } from 'formik';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import { getAllContacts } from 'redux/selectors';
 import { addContact } from 'redux/contactsApi';
 import { useDispatch, useSelector } from 'react-redux';
+import { notifyError, notifySuccess, notifyWarning } from 'Helpers/notify';
 
 const phoneRegExp =
   /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/;
@@ -35,15 +36,9 @@ const schema = Yup.object().shape({
 });
 
 export const ContactForm = () => {
-  const notify = text =>
-    toast.success(`${text}`, {
-      theme: 'dark',
-    });
-
   const nameId = nanoid();
   const numberId = nanoid();
   const emailId = nanoid();
-
   const contacts = useSelector(getAllContacts);
   const dispatch = useDispatch();
 
@@ -62,9 +57,12 @@ export const ContactForm = () => {
           contact => contact.name.toLowerCase() === values.name.toLowerCase()
         )
       ) {
-        return notify(`${values.name} is already in contacts.`);
+        return notifyWarning(`${values.name} is already in contacts.`);
       }
-      dispatch(addContact(values));
+      dispatch(addContact(values))
+        .unwrap()
+        .then(() => notifySuccess(`Contact add to contacts book`))
+        .catch(error => notifyError(`${error}`));
     },
   });
 
@@ -116,13 +114,13 @@ export const ContactForm = () => {
               fullWidth
               required
               id={numberId}
-              name="number"
-              label="Number"
+              name="phone"
+              label="Phone"
               type="tel"
-              value={formik.values.number}
+              value={formik.values.phone}
               onChange={formik.handleChange}
-              error={formik.touched.number && Boolean(formik.errors.number)}
-              helperText={formik.touched.number && formik.errors.number}
+              error={formik.touched.phone && Boolean(formik.errors.phone)}
+              helperText={formik.touched.phone && formik.errors.phone}
             />
             <Button
               color="primary"

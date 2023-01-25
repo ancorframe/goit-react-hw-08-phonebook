@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-axios.defaults.baseURL = 'http://localhost:3000/api/auth/users';
+axios.defaults.baseURL = 'http://localhost:3000/api';
 
 const token = {
   set(token) {
@@ -12,34 +12,42 @@ const token = {
   },
 };
 
-export const register = createAsyncThunk('users/register', async credential => {
-  try {
-    const { response } = await axios.post('/register', credential);
-
-    return response;
-  } catch (error) {
-    console.log(error);
+export const register = createAsyncThunk(
+  'users/register',
+  async (credential, { rejectWithValue }) => {
+    try {
+      const response = await axios.post('/auth/users/register', credential);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
   }
-});
+);
 
-export const login = createAsyncThunk('users/login', async credential => {
-  try {
-    const { response } = await axios.get('/login', credential);
-    token.set(response.token);
-    return response;
-  } catch (error) {
-    console.log(error);
+export const login = createAsyncThunk(
+  'users/login',
+  async (credential, { rejectWithValue }) => {
+    try {
+      const response = await axios.post('/auth/users/login', credential);
+      token.set(response.data.token);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
   }
-});
+);
 
-export const logout = createAsyncThunk('users/logout', async () => {
-  try {
-    await axios.post('/logout');
-    token.unset();
-  } catch (error) {
-    console.log(error);
+export const logout = createAsyncThunk(
+  'users/logout',
+  async (_, { rejectWithValue }) => {
+    try {
+      await axios.post('/auth/users/logout');
+      token.unset();
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
   }
-});
+);
 
 export const getCurrent = createAsyncThunk(
   'users/getCurrent',
@@ -51,52 +59,52 @@ export const getCurrent = createAsyncThunk(
         return thunkAPI.rejectedWithValue();
       }
       token.set(persistedToken);
-      const response = await axios.get('/current');
-      return response;
+      const response = await axios.get('/auth/users/current');
+      return response.data;
     } catch (error) {
-      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data.message);
     }
   }
 );
 
 export const updateSubscription = createAsyncThunk(
   'users/updateSubscription',
-  async credential => {
+  async (credential, { rejectWithValue }) => {
     try {
-      await axios.patch('', credential);
+      await axios.patch('/auth/users', credential);
     } catch (error) {
-      console.log(error);
+      return rejectWithValue(error.response.data.message);
     }
   }
 );
 
 export const updateAvatar = createAsyncThunk(
   'users/updateAvatar',
-  async credential => {
+  async (credential, { rejectWithValue }) => {
     try {
-      await axios.post('/', credential);
+      await axios.post('/auth/users/avatars', credential);
     } catch (error) {
-      console.log(error);
+      return rejectWithValue(error.response.data.message);
     }
   }
 );
 export const forgotPasswordUser = createAsyncThunk(
   'users/forgotPasswordUser',
-  async credential => {
+  async (credential, { rejectWithValue }) => {
     try {
-      await axios.patch('/avatars', credential);
+      await axios.patch('/auth/users/forgotPassword', credential);
     } catch (error) {
-      console.log(error);
+      return rejectWithValue(error.response.data.message);
     }
   }
 );
 export const restorePasswordUser = createAsyncThunk(
   'users/restorePasswordUser',
-  async credential => {
+  async (credential, { rejectWithValue }) => {
     try {
-      await axios.post('/restorePassword', credential);
+      await axios.post('/auth/users/restorePassword', credential);
     } catch (error) {
-      console.log(error);
+      return rejectWithValue(error.response.data.message);
     }
   }
 );

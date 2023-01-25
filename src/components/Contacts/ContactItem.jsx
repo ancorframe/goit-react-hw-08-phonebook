@@ -3,21 +3,21 @@ import 'react-toastify/dist/ReactToastify.css';
 import Fab from '@mui/material/Fab';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-// import { toast } from 'react-toastify';
 import { Box } from 'components/Box';
 import { useEffect, useState } from 'react';
 import { Modal } from 'components/Modal/Modal';
-// import { useDeleteContactMutation } from 'redux/contactsApi';
 import { EditingForm } from './EditingForm';
+import { useDispatch } from 'react-redux';
+import { deleteContactById } from 'redux/contactsApi';
+import { notifyError, notifySuccess } from 'Helpers/notify';
 
 export const ContactItem = ({ contact }) => {
-  // const notify = e =>
-  //   toast.success(e, {
-  //     theme: 'dark',
-  //   });
-
-  // const [deleteContact, { isLoading }] = useDeleteContactMutation();
+  const [deleteBtn, setDeleteBtn] = useState({
+    isLoading: false,
+    color: 'primary',
+  });
   const [showModal, setShowModal] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (showModal) {
@@ -30,12 +30,16 @@ export const ContactItem = ({ contact }) => {
     };
   });
 
-  const handleDelete = e => {
-    // deleteContact(e.currentTarget.id)
-    //   .unwrap()
-    //   .then(({ name }) => notify(`${name} was deleted`))
-    //   .catch(({ error }) => notify(`${error}`));
-    
+  const handleDelete = async e => {
+    setDeleteBtn({ isLoading: true });
+    dispatch(deleteContactById(e.currentTarget.id))
+      .unwrap()
+      .then(() => notifySuccess(`Contact delete`))
+      .catch(error => {
+        setDeleteBtn({ isLoading: false });
+        setDeleteBtn({ color: 'error' });
+        notifyError(`${error}`);
+      });
   };
 
   const onEsc = e => {
@@ -74,12 +78,12 @@ export const ContactItem = ({ contact }) => {
           <EditIcon />
         </Fab>
         <Fab
-          color="primary"
+          color={deleteBtn.color}
           aria-label="delete"
           type="button"
-          id={contact.id}
+          id={contact._id}
           onClick={handleDelete}
-          // disabled={isLoading}
+          disabled={deleteBtn.isLoading}
           size="small"
         >
           <DeleteIcon />
