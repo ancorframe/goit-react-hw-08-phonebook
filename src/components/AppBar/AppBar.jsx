@@ -6,10 +6,8 @@ import { useSelector } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-
 export const AppBar = () => {
-   const isLoggedIn = useSelector(getStatus);
-
+  const isLoggedIn = useSelector(getStatus);
 
   return (
     <Box as="header" borderBottom="normal" mb={3}>
@@ -24,7 +22,7 @@ export const AppBar = () => {
 
         {isLoggedIn && <UserMenu />}
       </Box>
-      <ToastContainer/>
+      <ToastContainer />
     </Box>
   );
 };
