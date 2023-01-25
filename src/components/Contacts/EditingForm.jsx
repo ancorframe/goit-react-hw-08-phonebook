@@ -14,7 +14,7 @@ import { nanoid } from 'nanoid';
 import { useFormik } from 'formik';
 import { useDispatch } from 'react-redux';
 import { updateContactById } from 'redux/contactsApi';
-import { notifyError, notifySuccess } from 'Helpers/notify';
+import { notifyError, notifySuccess } from 'helpers/notify';
 
 const phoneRegExp =
   /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/;

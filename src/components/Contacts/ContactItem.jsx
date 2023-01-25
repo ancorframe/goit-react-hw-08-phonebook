@@ -9,7 +9,7 @@ import { Modal } from 'components/Modal/Modal';
 import { EditingForm } from './EditingForm';
 import { useDispatch } from 'react-redux';
 import { deleteContactById } from 'redux/contactsApi';
-import { notifyError, notifySuccess } from 'Helpers/notify';
+import { notifyError, notifySuccess } from 'helpers/notify';
 
 export const ContactItem = ({ contact }) => {
   const [deleteBtn, setDeleteBtn] = useState({

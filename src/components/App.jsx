@@ -4,12 +4,12 @@ import { Box } from './Box';
 import { Layout } from './Layout';
 import { NotFoundPage } from 'pages/NotFoundPage';
 import { useDispatch, useSelector } from 'react-redux';
-import { PrivateRoute } from 'Helpers/PrivateRoute';
-import { RestrictedRoute } from 'Helpers/PublicRoute';
+import { PrivateRoute } from 'helpers/PrivateRoute';
+import { RestrictedRoute } from 'helpers/PublicRoute';
 import { SpinnerLoader } from './SpinnerLoader/SpinnerLoader';
 import { getAuthIsLoading, getToken } from 'redux/selectors';
 import { getCurrent } from 'redux/authApi';
-import { notifyError } from 'Helpers/notify';
+import { notifyError } from 'helpers/notify';
 
 const SingUpPage = lazy(() =>
   import('../pages/SingUpPage').then(module => ({

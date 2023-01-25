@@ -15,7 +15,7 @@ import { ToastContainer } from 'react-toastify';
 import { getAllContacts } from 'redux/selectors';
 import { addContact } from 'redux/contactsApi';
 import { useDispatch, useSelector } from 'react-redux';
-import { notifyError, notifySuccess, notifyWarning } from 'Helpers/notify';
+import { notifyError, notifySuccess, notifyWarning } from 'helpers/notify';
 
 const phoneRegExp =
   /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/;
