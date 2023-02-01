@@ -3,12 +3,21 @@ import axios from 'axios';
 
 export const getContacts = createAsyncThunk(
   'contacts/getContacts',
-  async (signal, { rejectWithValue }) => {
+  async (_, thunkAPI) => {
     try {
-      const response = await axios.get('/contacts', { signal });
+      const state = thunkAPI.getState();
+      const filterQuery = state.filter.favorite;
+      const page = state.filter.page;
+      const options = {
+        params: {
+          favorite: filterQuery,
+          page,
+        },
+      };
+      const response = await axios.get('/contacts?', (options));
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data.message);
+      return thunkAPI.rejectWithValue(error.response.data.message);
     }
   }
 );
@@ -58,9 +67,9 @@ export const updateContactById = createAsyncThunk(
 );
 export const updateFavoriteById = createAsyncThunk(
   'contacts/updateFavoriteById',
-  async (id, { rejectWithValue }) => {
+  async ({ id, body }, { rejectWithValue }) => {
     try {
-      const response = await axios.patch(`/contacts/${id}/favorite`);
+      const response = await axios.patch(`/contacts/${id}/favorite`, body);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data.message);

@@ -16,6 +16,10 @@ import { getAllContacts } from 'redux/selectors';
 import { addContact } from 'redux/contactsApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { notifyError, notifySuccess, notifyWarning } from 'helpers/notify';
+import Checkbox from '@mui/material/Checkbox';
+import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
+import Favorite from '@mui/icons-material/Favorite';
+import { FormControlLabel } from '@mui/material';
 
 const phoneRegExp =
   /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/;
@@ -39,6 +43,7 @@ export const ContactForm = () => {
   const nameId = nanoid();
   const numberId = nanoid();
   const emailId = nanoid();
+  const favoriteId = nanoid();
   const contacts = useSelector(getAllContacts);
   const dispatch = useDispatch();
 
@@ -46,6 +51,7 @@ export const ContactForm = () => {
     name: '',
     email: '',
     phone: '',
+    favorite: false,
   };
 
   const formik = useFormik({
@@ -96,6 +102,7 @@ export const ContactForm = () => {
               onChange={formik.handleChange}
               error={formik.touched.name && Boolean(formik.errors.name)}
               helperText={formik.touched.name && formik.errors.name}
+              autoComplete="off"
             />
             <TextField
               margin="normal"
@@ -108,6 +115,7 @@ export const ContactForm = () => {
               onChange={formik.handleChange}
               error={formik.touched.email && Boolean(formik.errors.email)}
               helperText={formik.touched.email && formik.errors.email}
+              autoComplete="off"
             />
             <TextField
               margin="normal"
@@ -121,7 +129,23 @@ export const ContactForm = () => {
               onChange={formik.handleChange}
               error={formik.touched.phone && Boolean(formik.errors.phone)}
               helperText={formik.touched.phone && formik.errors.phone}
+              autoComplete="off"
             />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  id={favoriteId}
+                  name="favorite"
+                  checked={formik.values.favorite}
+                  onChange={formik.handleChange}
+                  inputProps={{ 'aria-label': 'controlled' }}
+                  icon={<FavoriteBorder />}
+                  checkedIcon={<Favorite />}
+                />
+              }
+              label="favorite"
+            />
+
             <Button
               color="primary"
               variant="contained"

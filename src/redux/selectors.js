@@ -2,12 +2,12 @@ import { createSelector } from '@reduxjs/toolkit';
 
 const store = state => state;
 const contacts = state => state.contacts.contacts;
-const filterQuery = state => state.filter.value;
+const filterValue = state => state.filter.value;
 
 export const getFilteredContacts = createSelector(
-  [contacts, filterQuery],
-  (contacts, filterQuery) => {
-    const normalizedFilter = filterQuery.toLowerCase().trim();
+  [contacts, filterValue],
+  (contacts, filterValue) => {
+    const normalizedFilter = filterValue.toLowerCase().trim();
     return contacts.filter(contact =>
       contact.name.toLowerCase().includes(normalizedFilter)
     );
@@ -18,7 +18,7 @@ export const getAllContacts = createSelector(
   state => state.contacts.contacts
 );
 
-export const getFilter = createSelector(store, state => state.filterQuery);
+export const getFilter = createSelector(store, state => state.filterValue);
 
 export const getIsLoading = createSelector(
   store,
@@ -37,3 +37,15 @@ export const getUser = createSelector(store, state => state.auth.user);
 export const getToken = createSelector(store, state => state.auth.token);
 
 export const getStatus = createSelector(store, state => state.auth.isLoggedIn);
+
+export const getPage = createSelector(store, state => state.filter.page);
+
+export const getTotalPage = createSelector(
+  store,
+  state => state.filter.totalPage
+);
+
+export const getFilterQuery = createSelector(
+  store,
+  state => state.filter.favorite
+);

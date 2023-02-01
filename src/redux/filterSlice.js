@@ -4,14 +4,28 @@ export const filterSlice = createSlice({
   name: 'filter',
   initialState: {
     value: '',
+    page: 1,
+    totalPage: 0,
+    favorite:null,
   },
   reducers: {
-    update: (state, action) => {
+    updateValue: (state, action) => {
       state.value = action.payload;
+    },
+    updatePage: (state, action) => {
+      state.page = action.payload;
+    },
+    updateTotalPage: (state, action) => {
+      state.totalPage = action.payload;
+    },
+    updateFilterQuery: (state, action) => {
+      console.log(action.payload);
+      state.favorite = action.payload;
     },
   },
 });
 
-export const { update } = filterSlice.actions;
+export const { updateValue, updatePage, updateTotalPage, updateFilterQuery } =
+  filterSlice.actions;
 
 export default filterSlice.reducer;

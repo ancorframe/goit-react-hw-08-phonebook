@@ -8,8 +8,10 @@ import { useEffect, useState } from 'react';
 import { Modal } from 'components/Modal/Modal';
 import { EditingForm } from './EditingForm';
 import { useDispatch } from 'react-redux';
-import { deleteContactById } from 'redux/contactsApi';
+import { deleteContactById, updateFavoriteById } from 'redux/contactsApi';
 import { notifyError, notifySuccess } from 'helpers/notify';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 export const ContactItem = ({ contact }) => {
   const [deleteBtn, setDeleteBtn] = useState({
@@ -42,6 +44,19 @@ export const ContactItem = ({ contact }) => {
       });
   };
 
+  const setFavorite = async e => {
+    const body = { favorite: !contact.favorite };
+    const id = e.currentTarget.id;
+    dispatch(updateFavoriteById({ id, body }))
+      .unwrap()
+      .then(c =>
+        c.update.favorite
+          ? notifySuccess(`Contact add to favorite`)
+          : notifySuccess(`Contact remove from favorite`)
+      )
+      .catch(error => notifyError(`${error}`));
+  };
+
   const onEsc = e => {
     if (e.code === 'Escape') {
       onClose();
@@ -64,17 +79,35 @@ export const ContactItem = ({ contact }) => {
 
   return (
     <>
-      <Box width="396px" display="flex" justifyContent="space-between">
-        <Box
-          width="300px"
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <span>{contact.name}</span>
-          <span>{contact.phone}</span>
+      <Box
+        width="396px"
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        borderRadius="15px"
+        bg="#f7f7ff"
+      >
+        <Box width="250px">
+          <p>Name: {contact.name}</p>
+          <p>Email: {contact.email}</p>
+          <p>Phone: {contact.phone}</p>
         </Box>
-        <Fab color="secondary" aria-label="edit" size="small" onClick={onOpen}>
+        <Fab
+          id={contact._id}
+          type="button"
+          aria-label="favorite"
+          size="small"
+          onClick={setFavorite}
+        >
+          {contact.favorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+        </Fab>
+        <Fab
+          type="button"
+          color="secondary"
+          aria-label="edit"
+          size="small"
+          onClick={onOpen}
+        >
           <EditIcon />
         </Fab>
         <Fab

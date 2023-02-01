@@ -1,4 +1,5 @@
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
+import produce from 'immer';
 import {
   addContact,
   deleteContactById,
@@ -48,17 +49,13 @@ const updateContactByIdReducer = (state, action) => {
 };
 
 const updateFavoriteByIdReducer = (state, action) => {
-  const previous = state.contacts.filter(
-    contact => contact._id === action.payload.update._id
-  );
-  const updated = {
-    ...previous,
-    ...action.payload.update,
-  };
-  const index = state.contacts.findIndex(
-    contact => contact._id === updated._id
-  );
-  state.contacts.splice(index, 1, updated);
+  const updatedState = produce(state, draft => {
+    const index = draft.contacts.findIndex(
+      contact => contact._id === action.payload.update._id
+    );
+    draft.contacts[index].favorite = action.payload.update.favorite;
+  });
+  return updatedState;
 };
 
 const pendingReduser = state => {

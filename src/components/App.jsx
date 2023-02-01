@@ -27,6 +27,30 @@ const ContactsPage = lazy(() =>
   }))
 );
 
+const VerifyPage = lazy(() =>
+  import('../pages/VerifyPage').then(module => ({
+    default: module.VerifyPage,
+  }))
+);
+
+const ForgotPasswordPage = lazy(() =>
+  import('../pages/ForgotPasswordPage').then(module => ({
+    default: module.ForgotPasswordPage,
+  }))
+);
+
+const RestorePasswordPage = lazy(() =>
+  import('../pages/RestorePasswordPage').then(module => ({
+    default: module.RestorePasswordPage,
+  }))
+);
+
+const SettingsPage = lazy(() =>
+  import('../pages/SettingsPage').then(module => ({
+    default: module.SettingsPage,
+  }))
+);
+
 export const App = () => {
   const dispatch = useDispatch();
   const token = useSelector(getToken);
@@ -74,6 +98,42 @@ export const App = () => {
                   <PrivateRoute
                     redirectTo="/login"
                     component={<ContactsPage />}
+                  />
+                }
+              />
+              <Route
+                path="verify/:token"
+                element={
+                  <RestrictedRoute
+                    redirectTo="/contacts"
+                    component={<VerifyPage />}
+                  />
+                }
+              />
+              <Route
+                path="forgotPassword"
+                element={
+                  <RestrictedRoute
+                    redirectTo="/contacts"
+                    component={<ForgotPasswordPage />}
+                  />
+                }
+              />
+              <Route
+                path="restorePassword/:token"
+                element={
+                  <RestrictedRoute
+                    redirectTo="/contacts"
+                    component={<RestorePasswordPage />}
+                  />
+                }
+              />
+              <Route
+                path="userSettings"
+                element={
+                  <PrivateRoute
+                    redirectTo="/login"
+                    component={<SettingsPage />}
                   />
                 }
               />

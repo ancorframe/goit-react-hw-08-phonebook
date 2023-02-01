@@ -1,7 +1,18 @@
 import persistReducer from 'redux-persist/es/persistReducer';
 import storage from 'redux-persist/lib/storage';
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
-import { register, login, logout, getCurrent, updateSubscription, updateAvatar, forgotPasswordUser, restorePasswordUser } from './authApi';
+import {
+  register,
+  login,
+  logout,
+  getCurrent,
+  updateSubscription,
+  updateAvatar,
+  forgotPasswordUser,
+  restorePasswordUser,
+  verifyUser,
+  resendVerifyEmailUser,
+} from './authApi';
 
 const extraActions = [
   register,
@@ -12,6 +23,8 @@ const extraActions = [
   updateAvatar,
   forgotPasswordUser,
   restorePasswordUser,
+  verifyUser,
+  resendVerifyEmailUser,
 ];
 
 const getActions = type => isAnyOf(...extraActions.map(action => action[type]));
@@ -37,14 +50,20 @@ const getCurrentReducer = (state, action) => {
 };
 
 const updateSubscriptionReducer = (state, action) => {
-  state.subscription = action.payload;
+  state.user.subscription = action.payload.subscription;
 };
 
-const updateAvatarReducer = (state, action) => {};
+const updateAvatarReducer = (state, action) => {
+  state.user.avatarURL = action.payload.avatarURL;
+};
 
 const forgotPasswordUserReducer = (state, action) => {};
 
 const restorePasswordUserReducer = (state, action) => {};
+
+const verifyUserReducer = (state, action) => {};
+
+const resendVerifyEmailUserReducer = (state, action) => {};
 
 const pendingReduser = state => {
   state.isLoading = true;
@@ -69,13 +88,18 @@ const initialState = {
   },
   token: null,
   isLoggedIn: false,
-  isLoading:false,
+  isLoading: false,
   error: null,
 };
 
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
+  reducers: {
+    updateToken: (state, action) => {
+      state.token = action.payload;
+    },
+  },
   extraReducers: builder => {
     builder
       .addCase(register.fulfilled, registerReducer)
@@ -86,11 +110,15 @@ export const authSlice = createSlice({
       .addCase(updateAvatar.fulfilled, updateAvatarReducer)
       .addCase(forgotPasswordUser.fulfilled, forgotPasswordUserReducer)
       .addCase(restorePasswordUser.fulfilled, restorePasswordUserReducer)
+      .addCase(verifyUser.fulfilled, verifyUserReducer)
+      .addCase(resendVerifyEmailUser.fulfilled, resendVerifyEmailUserReducer)
       .addMatcher(getActions('pending'), pendingReduser)
       .addMatcher(getActions('rejected'), rejectedReducer)
       .addMatcher(getActions('fulfilled'), fulfilledReducer);
   },
 });
+
+export const { updateToken } = authSlice.actions;
 
 const persistConfig = {
   key: 'auth',

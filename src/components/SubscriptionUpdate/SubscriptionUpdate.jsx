@@ -20,32 +20,7 @@ import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
 import Favorite from '@mui/icons-material/Favorite';
 import { FormControlLabel } from '@mui/material';
 
-const phoneRegExp =
-  /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/;
-
-const schema = Yup.object().shape({
-  name: Yup.string()
-    .min(2, 'Too Short!')
-    .max(20, 'Too Long!')
-    .required('Required'),
-  email: Yup.string('Enter your email')
-    .email('Enter a valid email')
-    .required('Email is required'),
-  phone: Yup.string()
-    .matches(phoneRegExp, 'Phone number is not valid')
-    .min(13, 'Too Short!')
-    .max(13, 'Too Long!')
-    .required('Required'),
-});
-
-export const EditingForm = ({ value, close }) => {
-  const { _id: id } = value;
-  const nameId = nanoid();
-  const numberId = nanoid();
-  const emailId = nanoid();
-  const favoriteId = nanoid();
-  const dispatch = useDispatch();
-
+export const SubscriptionUpdate = ({ close }) => {
   const formik = useFormik({
     initialValues: {
       name: value.name,
@@ -89,30 +64,6 @@ export const EditingForm = ({ value, close }) => {
           <Box as="form" onSubmit={formik.handleSubmit} sx={{ mt: 1 }}>
             <TextField
               margin="normal"
-              required
-              fullWidth
-              id={nameId}
-              name="name"
-              label="Name"
-              value={formik.values.name}
-              onChange={formik.handleChange}
-              error={formik.touched.name && Boolean(formik.errors.name)}
-              helperText={formik.touched.name && formik.errors.name}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id={emailId}
-              name="email"
-              label="Email"
-              value={formik.values.email}
-              onChange={formik.handleChange}
-              error={formik.touched.email && Boolean(formik.errors.email)}
-              helperText={formik.touched.email && formik.errors.email}
-            />
-            <TextField
-              margin="normal"
               fullWidth
               required
               id={numberId}
@@ -123,20 +74,6 @@ export const EditingForm = ({ value, close }) => {
               onChange={formik.handleChange}
               error={formik.touched.phone && Boolean(formik.errors.phone)}
               helperText={formik.touched.phone && formik.errors.phone}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  id={favoriteId}
-                  name="favorite"
-                  checked={formik.values.favorite}
-                  onChange={formik.handleChange}
-                  inputProps={{ 'aria-label': 'controlled' }}
-                  icon={<FavoriteBorder />}
-                  checkedIcon={<Favorite />}
-                />
-              }
-              label="favorite"
             />
 
             <Button
@@ -153,9 +90,4 @@ export const EditingForm = ({ value, close }) => {
       </Container>
     </>
   );
-};
-
-EditingForm.propTypes = {
-  close: PropTypes.func.isRequired,
-  value: PropTypes.object.isRequired,
 };

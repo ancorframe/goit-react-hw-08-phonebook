@@ -14,7 +14,7 @@ export const ContactList = () => {
   const filteredContacts = useSelector(getFilteredContacts);
   const isLoading = useSelector(getIsLoading);
 
-  if (isLoading) {
+  if (allContacts.length === 0 && isLoading) {
     return (
       <Box display="flex" flexDirection="column" alignItems="center">
         <SpinnerLoader />

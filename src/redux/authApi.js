@@ -71,7 +71,8 @@ export const updateSubscription = createAsyncThunk(
   'users/updateSubscription',
   async (credential, { rejectWithValue }) => {
     try {
-      await axios.patch('/auth/users', credential);
+      const response = await axios.patch('/auth/users', credential);
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data.message);
     }
@@ -81,28 +82,72 @@ export const updateSubscription = createAsyncThunk(
 export const updateAvatar = createAsyncThunk(
   'users/updateAvatar',
   async (credential, { rejectWithValue }) => {
+    console.log(credential);
     try {
-      await axios.post('/auth/users/avatars', credential);
+      const response = await axios.patch('/auth/users/avatars', credential, {
+        headers: { 'content-type': 'multipart/form-data' },
+      });
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data.message);
     }
   }
 );
+
 export const forgotPasswordUser = createAsyncThunk(
   'users/forgotPasswordUser',
   async (credential, { rejectWithValue }) => {
     try {
-      await axios.patch('/auth/users/forgotPassword', credential);
+     const response = await axios.post(
+       '/auth/users/forgotPassword',
+       credential
+     );
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data.message);
     }
   }
 );
+
 export const restorePasswordUser = createAsyncThunk(
   'users/restorePasswordUser',
+  async ({ password, token }, { rejectWithValue }) => {
+    try {
+      const option = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const response = await axios.post(
+        '/auth/users/restorePassword',
+        password,
+        option
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const verifyUser = createAsyncThunk(
+  'users/verifyUser',
+  async (token, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`/auth/users/verify/${token}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const resendVerifyEmailUser = createAsyncThunk(
+  'users/resendVerifyEmailUser',
   async (credential, { rejectWithValue }) => {
     try {
-      await axios.post('/auth/users/restorePassword', credential);
+      const response = await axios.post(`/auth/users/verify`, credential);
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data.message);
     }

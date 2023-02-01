@@ -5,6 +5,7 @@ import { useFormik } from 'formik';
 import { Box } from 'components/Box';
 import { useDispatch } from 'react-redux';
 import { login } from 'redux/authApi';
+import { notifyError, notifySuccess } from 'helpers/notify';
 
 const validationSchema = Yup.object().shape({
   email: Yup.string('Enter your email')
@@ -27,7 +28,11 @@ export const LoginForm = () => {
     initialValues,
     validationSchema: validationSchema,
     onSubmit: values => {
-      dispatch(login(values));
+      dispatch(login(values))
+        .unwrap()
+        .then(() => notifySuccess(`Login Success`))
+        .catch(error => notifyError(`${error}`));
+
     },
   });
 
