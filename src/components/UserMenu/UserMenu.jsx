@@ -1,7 +1,7 @@
 // import Button from '@mui/material/Button';
 import { Box } from 'components/Box';
 // import { notifyError } from 'helpers/notify';
-import { useDispatch, useSelector } from 'react-redux';
+import {  useSelector } from 'react-redux';
 // import { logout } from 'redux/authApi';
 import { getUser } from 'redux/selectors';
 import Avatar from '@mui/material/Avatar';
