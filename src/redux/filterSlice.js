@@ -19,7 +19,6 @@ export const filterSlice = createSlice({
       state.totalPage = action.payload;
     },
     updateFilterQuery: (state, action) => {
-      console.log(action.payload);
       state.favorite = action.payload;
     },
   },

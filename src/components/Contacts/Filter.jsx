@@ -21,9 +21,10 @@ export const Filter = () => {
     const value = e.target.value.trim();
     dispatch(updateValue(value));
   };
+
   const onSelectChange = e => {
-    console.log(e.target.value);
-    dispatch(updateFilterQuery(e.target.value));
+    const value = e.target.value === 'all' ? null : e.target.value;
+    dispatch(updateFilterQuery(value));
     dispatch(getContacts());
   };
 
@@ -61,11 +62,11 @@ export const Filter = () => {
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
-              value={filterQuery}
+              value={filterQuery === null ? 'all' : filterQuery}
               label="Filter by favorite"
               onChange={onSelectChange}
             >
-              <MenuItem value={null}>All</MenuItem>
+              <MenuItem value={'all'}>All</MenuItem>
               <MenuItem value={'true'}>All favorite</MenuItem>
               <MenuItem value={'false'}>All not fovorite</MenuItem>
             </Select>
