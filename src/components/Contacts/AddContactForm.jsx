@@ -8,10 +8,8 @@ import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
 import Box from '@mui/material/Box';
-import 'react-toastify/dist/ReactToastify.css';
 import { nanoid } from 'nanoid';
 import { useFormik } from 'formik';
-import { ToastContainer } from 'react-toastify';
 import { getAllContacts } from 'redux/selectors';
 import { addContact } from 'redux/contactsApi';
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,6 +18,7 @@ import Checkbox from '@mui/material/Checkbox';
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
 import Favorite from '@mui/icons-material/Favorite';
 import { FormControlLabel } from '@mui/material';
+import { useState } from 'react';
 
 const phoneRegExp =
   /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/;
@@ -46,6 +45,7 @@ export const ContactForm = () => {
   const favoriteId = nanoid();
   const contacts = useSelector(getAllContacts);
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(null);
 
   const initialValues = {
     name: '',
@@ -57,7 +57,8 @@ export const ContactForm = () => {
   const formik = useFormik({
     initialValues,
     validationSchema: schema,
-    onSubmit: values => {
+    onSubmit: async values => {
+      setIsLoading(true);
       if (
         contacts.find(
           contact => contact.name.toLowerCase() === values.name.toLowerCase()
@@ -65,10 +66,14 @@ export const ContactForm = () => {
       ) {
         return notifyWarning(`${values.name} is already in contacts.`);
       }
-      dispatch(addContact(values))
-        .unwrap()
-        .then(() => notifySuccess(`Contact add to contacts book`))
-        .catch(error => notifyError(`${error}`));
+      try {
+        await dispatch(addContact(values));
+        setIsLoading(false);
+        notifySuccess(`Contact add to contacts book`);
+      } catch (error) {
+        setIsLoading(false);
+        notifyError(`${error}`);
+      }
     },
   });
 
@@ -152,13 +157,13 @@ export const ContactForm = () => {
               fullWidth
               type="submit"
               sx={{ mt: 3, mb: 2 }}
+              disabled={isLoading}
             >
               Add contact
             </Button>
           </Box>
         </Box>
       </Container>
-      <ToastContainer />
     </>
   );
 };

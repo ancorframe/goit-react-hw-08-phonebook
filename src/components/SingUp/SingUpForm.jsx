@@ -3,12 +3,9 @@ import TextField from '@mui/material/TextField';
 import * as Yup from 'yup';
 import { Box } from 'components/Box';
 import { useFormik } from 'formik';
-// import { useSignupMutation } from 'redux/authApi';
 import { useDispatch } from 'react-redux';
-// import { updateToken } from '../../redux/authSlice';
 import { register } from 'redux/authApi';
-import { toast } from 'react-toastify';
-
+import { notifyError, notifySuccess } from 'helpers/notify';
 
 const validationSchema = Yup.object().shape({
   // name: Yup.string('Enter your name').required('name is required'),
@@ -20,14 +17,8 @@ const validationSchema = Yup.object().shape({
     .required('Password is required'),
 });
 
-export const SingUpForm = () => {
-  // const [verify, setVerify] = useState(null);
-  const notify = text =>
-    toast.success(`${text}`, {
-      theme: 'dark',
-    });
+export const SingUpForm = ({ setSuccess }) => {
   const dispatch = useDispatch();
-  const controller = new AbortController();
 
   const initialValues = {
     // name: '',
@@ -38,27 +29,21 @@ export const SingUpForm = () => {
   const formik = useFormik({
     initialValues,
     validationSchema: validationSchema,
-    onSubmit: values => {
-      dispatch(register(values, controller))
-        .unwrap()
-        .then(originalPromiseResult => {
-          console.log(originalPromiseResult);
-          notify('check your email to verify');
-          // setVerify(true);
-          // handle result here
-        });
+    onSubmit: async values => {
+      try {
+        await dispatch(register(values)).unwrap()
+        notifySuccess(`Successfull!`);
+        setSuccess(true);
+      } catch (error) {
+        notifyError(`${error}`);
+      }
     },
   });
 
-  //   if (cancellSignal) {
-  //   controller.abort();
-  // }
-
   return (
     <>
-  
-        <Box as="form" onSubmit={formik.handleSubmit} sx={{ mt: 1 }}>
-          {/* <TextField
+      <Box as="form" onSubmit={formik.handleSubmit} sx={{ mt: 1 }}>
+        {/* <TextField
           margin="normal"
           fullWidth
           required
@@ -70,41 +55,40 @@ export const SingUpForm = () => {
           error={formik.touched.name && Boolean(formik.errors.name)}
           helperText={formik.touched.name && formik.errors.name}
         /> */}
-          <TextField
-            margin="normal"
-            fullWidth
-            required
-            id="email"
-            name="email"
-            label="Email"
-            value={formik.values.email}
-            onChange={formik.handleChange}
-            error={formik.touched.email && Boolean(formik.errors.email)}
-            helperText={formik.touched.email && formik.errors.email}
-          />
-          <TextField
-            margin="normal"
-            fullWidth
-            required
-            id="password"
-            name="password"
-            label="Password"
-            type="password"
-            value={formik.values.password}
-            onChange={formik.handleChange}
-            error={formik.touched.password && Boolean(formik.errors.password)}
-            helperText={formik.touched.password && formik.errors.password}
-          />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-          >
-            Register
-          </Button>
-        </Box>
-
+        <TextField
+          margin="normal"
+          fullWidth
+          required
+          id="email"
+          name="email"
+          label="Email"
+          value={formik.values.email}
+          onChange={formik.handleChange}
+          error={formik.touched.email && Boolean(formik.errors.email)}
+          helperText={formik.touched.email && formik.errors.email}
+        />
+        <TextField
+          margin="normal"
+          fullWidth
+          required
+          id="password"
+          name="password"
+          label="Password"
+          type="password"
+          value={formik.values.password}
+          onChange={formik.handleChange}
+          error={formik.touched.password && Boolean(formik.errors.password)}
+          helperText={formik.touched.password && formik.errors.password}
+        />
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          sx={{ mt: 3, mb: 2 }}
+        >
+          Register
+        </Button>
+      </Box>
     </>
   );
 };

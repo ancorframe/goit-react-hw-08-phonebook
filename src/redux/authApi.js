@@ -83,7 +83,6 @@ export const updateSubscription = createAsyncThunk(
 export const updateAvatar = createAsyncThunk(
   'users/updateAvatar',
   async (credential, { rejectWithValue }) => {
-    console.log(credential);
     try {
       const response = await axios.patch('/auth/users/avatars', credential, {
         headers: { 'content-type': 'multipart/form-data' },

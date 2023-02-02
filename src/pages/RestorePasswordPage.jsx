@@ -11,9 +11,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { restorePasswordUser } from 'redux/authApi';
 import { getAuthIsLoading } from 'redux/selectors';
-import { notifyError } from 'helpers/notify';
-import { PasswordForm } from 'components/AuthForns/PasswordForm';
+import { notifyError, notifySuccess } from 'helpers/notify';
 import { useNavigate } from 'react-router-dom';
+
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+
+const schema = Yup.object().shape({
+  password: Yup.string('Enter your password')
+    .min(8, 'Password should be of minimum 8 characters length')
+    .required('Password is required'),
+});
 
 export const RestorePasswordPage = () => {
   const navigate = useNavigate();
@@ -27,15 +37,25 @@ export const RestorePasswordPage = () => {
       return;
     }
     if (password) {
-      dispatch(restorePasswordUser({ password, token }))
-        .unwrap()
-        .then(() => navigate('/login'))
-        .catch(error => {
+      (async () => {
+        try {
+          await dispatch(restorePasswordUser({ password, token })).unwrap();
+          notifySuccess(`password  changed`);
+          navigate('/login');
+        } catch (error) {
           notifyError(`${error}`);
-        });
+        }
+      })();
     }
-    return () => {};
   }, [dispatch, navigate, password, token]);
+
+  const formik = useFormik({
+    initialValues: { password: '' },
+    validationSchema: schema,
+    onSubmit: values => {
+      setPassword(values);
+    },
+  });
 
   return (
     <>
@@ -57,7 +77,31 @@ export const RestorePasswordPage = () => {
               <Typography component="h1" variant="h5">
                 Sign in
               </Typography>
-              <PasswordForm setPassword={setPassword} />
+              <Box as="form" onSubmit={formik.handleSubmit} width="100%">
+                <TextField
+                  margin="normal"
+                  fullWidth
+                  required
+                  id="password"
+                  name="password"
+                  label="Password"
+                  type="password"
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                  error={
+                    formik.touched.password && Boolean(formik.errors.password)
+                  }
+                  helperText={formik.touched.password && formik.errors.password}
+                />
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                >
+                  Send
+                </Button>
+              </Box>{' '}
             </BoxM>
           </Container>
         </>

@@ -7,9 +7,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { PrivateRoute } from 'helpers/PrivateRoute';
 import { RestrictedRoute } from 'helpers/PublicRoute';
 import { SpinnerLoader } from './SpinnerLoader/SpinnerLoader';
-import { getAuthIsLoading, getToken } from 'redux/selectors';
+import {  getToken } from 'redux/selectors';
 import { getCurrent } from 'redux/authApi';
 import { notifyError } from 'helpers/notify';
+import { useState } from 'react';
 
 const SingUpPage = lazy(() =>
   import('../pages/SingUpPage').then(module => ({
@@ -54,16 +55,26 @@ const SettingsPage = lazy(() =>
 export const App = () => {
   const dispatch = useDispatch();
   const token = useSelector(getToken);
-  const isLoading = useSelector(getAuthIsLoading);
+  // const isLoading = useSelector(getAuthIsLoading);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const contoller = new AbortController();
     if (token) {
-      dispatch(getCurrent(contoller.signal))
-        .unwrap()
-        .then()
-        .catch(error => notifyError(`${error}`));
+      (async () => {
+        try {
+          await dispatch(getCurrent(contoller.signal));
+          setIsLoading(false);
+        } catch (error) {
+          setIsLoading(false);
+          notifyError(`${error}`);
+        }
+      })();
     }
+    if (!token) {
+      setIsLoading(false);
+    }
+
     return () => contoller.abort();
   }, [dispatch, token]);
 

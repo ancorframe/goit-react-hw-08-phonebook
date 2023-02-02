@@ -12,10 +12,13 @@ export const ContactsPage = () => {
 
   useEffect(() => {
     const contoller = new AbortController();
-    dispatch(getContacts(contoller.signal))
-      .unwrap()
-      .then()
-      .catch(error => notifyError(`${error}`));
+    (async () => {
+      try {
+        await dispatch(getContacts(contoller.signal)).unwrap()
+      } catch (error) {
+        notifyError(`${error}`);
+      }
+    })();
     return () => contoller.abort();
   }, [dispatch]);
 

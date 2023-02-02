@@ -28,32 +28,38 @@ export const SettingsPage = () => {
 
   const dispatch = useDispatch();
 
-  const handleLogout = () => {
-    dispatch(logout())
-      .unwrap()
-      .then()
-      .catch(error => notifyError(`${error}`));
+  const handleLogout = async () => {
+    try {
+      await dispatch(logout()).unwrap();
+    } catch (error) {
+      notifyError(`${error}`);
+    }
   };
 
-  const uploadAvatar = e => {
+  const uploadAvatar = async e => {
     e.preventDefault();
     const formData = new FormData();
     formData.append('avatar', selectedImage);
-    dispatch(updateAvatar(formData))
-      .unwrap()
-      .then(() => notifySuccess(`Avatar updated`))
-      .catch(error => notifyError(`${error}`));
+    try {
+      await dispatch(updateAvatar(formData)).unwrap();
+      notifySuccess(`Avatar updated`);
+      setSelectedImage(null);
+    } catch (error) {
+      notifyError(`${error}`);
+    }
   };
 
   const onSubscription = e => {
     setSubscription(e.target.value);
   };
 
-  const changeSubscription = () => {
-    dispatch(updateSubscription({ subscription }))
-      .unwrap()
-      .then(() => notifySuccess(`Subscription updated`))
-      .catch(error => notifyError(`${error}`));
+  const changeSubscription = async () => {
+    try {
+      dispatch(updateSubscription({ subscription })).unwrap();
+      notifySuccess(`Subscription updated`);
+    } catch (error) {
+      notifyError(`${error}`);
+    }
   };
   return (
     <>
@@ -82,7 +88,7 @@ export const SettingsPage = () => {
               display="flex"
               justifyContent="space-between"
               alignItems="center"
-              mt='15px'
+              mt="15px"
             >
               <FormControl>
                 <FormLabel id="demo-row-radio-buttons-group-label">
@@ -147,7 +153,7 @@ export const SettingsPage = () => {
                       setSelectedImage(event.target.files[0]);
                     }}
                   />
-                  <Box display="flex" justifyContent="space-between" mt='25px'>
+                  <Box display="flex" justifyContent="space-between" mt="25px">
                     <Button
                       variant="outlined"
                       type="button"

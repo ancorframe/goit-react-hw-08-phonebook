@@ -29,7 +29,9 @@ const extraActions = [
 
 const getActions = type => isAnyOf(...extraActions.map(action => action[type]));
 
-const registerReducer = (state, action) => {};
+const registerReducer = (state, action) => {
+  state.user.email=action.payload.email
+};
 
 const loginReducer = (state, action) => {
   state.user = action.payload.user;
