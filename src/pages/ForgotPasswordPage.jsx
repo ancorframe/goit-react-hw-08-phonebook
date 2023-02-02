@@ -9,7 +9,6 @@ import Container from '@mui/material/Container';
 import { Box } from 'components/Box';
 import { SpinnerLoader } from 'components/SpinnerLoader/SpinnerLoader';
 import { notifyError, notifySuccess } from 'helpers/notify';
-import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { forgotPasswordUser } from 'redux/authApi';
 import { getAuthIsLoading } from 'redux/selectors';
@@ -18,6 +17,7 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
+import { useNavigate } from 'react-router-dom';
 
 const schema = Yup.object().shape({
   email: Yup.string('Enter your email')
@@ -26,8 +26,7 @@ const schema = Yup.object().shape({
 });
 
 export const ForgotPasswordPage = () => {
-  const [success, setSuccess] = useState(null);
-
+  const navigate = useNavigate();
   const isLoading = useSelector(getAuthIsLoading);
   const dispatch = useDispatch();
 
@@ -37,8 +36,8 @@ export const ForgotPasswordPage = () => {
     onSubmit: async values => {
       try {
         await dispatch(forgotPasswordUser(values)).unwrap();
-        setSuccess(true);
         notifySuccess(`Please check your email`);
+        navigate('/login');
       } catch (error) {
         notifyError(`${error}`);
       }
@@ -49,55 +48,51 @@ export const ForgotPasswordPage = () => {
     <>
       {!isLoading ? (
         <>
-          {!success ? (
-            <Container maxWidth="xs">
-              <CssBaseline />
-              <BoxM
-                sx={{
-                  marginTop: 8,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                }}
-              >
-                <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                  <PasswordIcon />
-                </Avatar>
-                <Typography component="h1" variant="h5">
-                  Forgot Password
-                </Typography>
-                <Box as="form" onSubmit={formik.handleSubmit} width="100%">
-                  <TextField
-                    margin="normal"
-                    fullWidth
-                    required
-                    id="email"
-                    name="email"
-                    label="Email"
-                    value={formik.values.email}
-                    onChange={formik.handleChange}
-                    error={formik.touched.email && Boolean(formik.errors.email)}
-                    helperText={formik.touched.email && formik.errors.email}
-                  />
-                  <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    sx={{ mt: 3, mb: 2 }}
-                  >
-                    Send
-                  </Button>
-                </Box>
-                <Grid container justifyContent="flex-end">
-                  <Grid item>
-                    <Link to="/login">Go to login</Link>
-                  </Grid>
+          <Container maxWidth="xs">
+            <CssBaseline />
+            <BoxM
+              sx={{
+                marginTop: 8,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
+            >
+              <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                <PasswordIcon />
+              </Avatar>
+              <Typography component="h1" variant="h5">
+                Forgot Password
+              </Typography>
+              <Box as="form" onSubmit={formik.handleSubmit} width="100%">
+                <TextField
+                  margin="normal"
+                  fullWidth
+                  required
+                  id="email"
+                  name="email"
+                  label="Email"
+                  value={formik.values.email}
+                  onChange={formik.handleChange}
+                  error={formik.touched.email && Boolean(formik.errors.email)}
+                  helperText={formik.touched.email && formik.errors.email}
+                />
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                >
+                  Send
+                </Button>
+              </Box>
+              <Grid container justifyContent="flex-end">
+                <Grid item>
+                  <Link to="/login">Go to login</Link>
                 </Grid>
-              </BoxM>
-            </Container>
-          ) : (
-            <> success go to your email for restore password</>
-          )}
+              </Grid>
+            </BoxM>
+          </Container>
         </>
       ) : (
         <>
