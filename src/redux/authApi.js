@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-axios.defaults.baseURL = 'https://nodejscontacts.onrender.com';
+axios.defaults.baseURL = 'https://nodejscontacts.onrender.com/api';
 
 const token = {
   set(token) {
