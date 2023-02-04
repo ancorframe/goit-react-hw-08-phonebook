@@ -25,20 +25,21 @@ const getContactsReducer = (state, action) => {
     return;
   }
   state.contacts = action.payload.contacts;
+  state.totalPage = action.payload.totalPage;
   return state;
 };
 
 const getContactByIdReducer = (state, action) => {};
 
 const addContactReducer = (state, action) => {
-  state.contacts.push(action.payload.contact);
+  // state.contacts.push(action.payload.contact);
 };
 
 const deleteContactByIdReducer = (state, action) => {
-  const index = state.contacts.findIndex(
-    contact => contact._id === action.meta.arg
-  );
-  state.contacts.splice(index, 1);
+  // const index = state.contacts.findIndex(
+  //   contact => contact._id === action.meta.arg
+  // );
+  // state.contacts.splice(index, 1);
 };
 
 const updateContactByIdReducer = (state, action) => {
@@ -76,8 +77,15 @@ export const contactsSlice = createSlice({
   name: 'contacts',
   initialState: {
     contacts: [],
+    page: 1,
+    totalPage: 0,
     isLoading: false,
     error: null,
+  },
+  reducers: {
+    updatePage: (state, action) => {
+      state.page = action.payload;
+    },
   },
   extraReducers: builder => {
     builder
@@ -92,5 +100,8 @@ export const contactsSlice = createSlice({
       .addMatcher(getActions('fulfilled'), fulfilledReducer);
   },
 });
+
+export const { updatePage } =
+  contactsSlice.actions;
 
 export const contactsReducer = contactsSlice.reducer;

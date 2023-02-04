@@ -38,11 +38,11 @@ export const getToken = createSelector(store, state => state.auth.token);
 
 export const getStatus = createSelector(store, state => state.auth.isLoggedIn);
 
-export const getPage = createSelector(store, state => state.filter.page);
+export const getPage = createSelector(store, state => state.contacts.page);
 
 export const getTotalPage = createSelector(
   store,
-  state => state.filter.totalPage
+  state => state.contacts.totalPage
 );
 
 export const getFilterQuery = createSelector(

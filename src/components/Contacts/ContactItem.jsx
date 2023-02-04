@@ -8,7 +8,11 @@ import { useEffect, useState } from 'react';
 import { Modal } from 'components/Modal/Modal';
 import { EditingForm } from './EditingForm';
 import { useDispatch } from 'react-redux';
-import { deleteContactById, updateFavoriteById } from 'redux/contactsApi';
+import {
+  deleteContactById,
+  getContacts,
+  updateFavoriteById,
+} from 'redux/contactsApi';
 import { notifyError, notifySuccess } from 'helpers/notify';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -34,27 +38,30 @@ export const ContactItem = ({ contact }) => {
 
   const handleDelete = async e => {
     setDeleteBtn({ isLoading: true });
-    dispatch(deleteContactById(e.currentTarget.id))
-      .unwrap()
-      .then(() => notifySuccess(`Contact delete`))
-      .catch(error => {
-        setDeleteBtn({ isLoading: false });
-        setDeleteBtn({ color: 'error' });
-        notifyError(`${error}`);
-      });
+    try {
+      await dispatch(deleteContactById(e.currentTarget.id)).unwrap();
+      notifySuccess(`Contact delete`);
+      await dispatch(getContacts());
+    } catch (error) {
+      setDeleteBtn({ isLoading: false });
+      setDeleteBtn({ color: 'error' });
+      notifyError(`${error}`);
+    }
   };
 
   const setFavorite = async e => {
     const body = { favorite: !contact.favorite };
     const id = e.currentTarget.id;
-    dispatch(updateFavoriteById({ id, body }))
-      .unwrap()
-      .then(c =>
-        c.update.favorite
-          ? notifySuccess(`Contact add to favorite`)
-          : notifySuccess(`Contact remove from favorite`)
-      )
-      .catch(error => notifyError(`${error}`));
+    try {
+      const response = await dispatch(
+        updateFavoriteById({ id, body })
+      ).unwrap();
+      response.update.favorite
+        ? notifySuccess(`Contact add to favorite`)
+        : notifySuccess(`Contact remove from favorite`);
+    } catch (error) {
+      notifyError(`${error}`);
+    }
   };
 
   const onEsc = e => {

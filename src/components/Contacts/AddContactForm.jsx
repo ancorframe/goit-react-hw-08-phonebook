@@ -11,7 +11,7 @@ import Box from '@mui/material/Box';
 import { nanoid } from 'nanoid';
 import { useFormik } from 'formik';
 import { getAllContacts } from 'redux/selectors';
-import { addContact } from 'redux/contactsApi';
+import { addContact, getContacts } from 'redux/contactsApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { notifyError, notifySuccess, notifyWarning } from 'helpers/notify';
 import Checkbox from '@mui/material/Checkbox';
@@ -68,6 +68,7 @@ export const ContactForm = () => {
       }
       try {
         await dispatch(addContact(values));
+        await dispatch(getContacts());
         setIsLoading(false);
         notifySuccess(`Contact add to contacts book`);
       } catch (error) {

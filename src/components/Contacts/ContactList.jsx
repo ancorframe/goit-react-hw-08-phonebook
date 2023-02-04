@@ -4,16 +4,34 @@ import {
   getAllContacts,
   getFilteredContacts,
   getIsLoading,
+  getPage,
+  getTotalPage,
 } from 'redux/selectors';
 import { Box } from 'components/Box';
 import { SpinnerLoader } from 'components/SpinnerLoader/SpinnerLoader';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import Pagination from '@mui/material/Pagination';
+import { updatePage } from 'redux/contactsSlice';
+import { getContacts } from 'redux/contactsApi';
+import { notifyError } from 'helpers/notify';
 
 export const ContactList = () => {
+  const page = useSelector(getPage);
+  const totalPage = useSelector(getTotalPage)
+  const dispatch = useDispatch()
+
   const allContacts = useSelector(getAllContacts);
   const filteredContacts = useSelector(getFilteredContacts);
   const isLoading = useSelector(getIsLoading);
+  const handleChange = async(e,value) => {
 
+    try {
+      await dispatch(updatePage(value));
+      await dispatch(getContacts());
+    } catch (error) {
+       notifyError(`${error}`);
+    }
+  };
   if (allContacts.length === 0 && isLoading) {
     return (
       <Box display="flex" flexDirection="column" alignItems="center">
@@ -44,6 +62,7 @@ export const ContactList = () => {
       flexDirection="column"
       alignItems="center"
       gridGap={3}
+      pb='25px'
     >
       {filteredContacts.map(item => {
         return (
@@ -52,6 +71,12 @@ export const ContactList = () => {
           </li>
         );
       })}
+      <Pagination
+        count={totalPage}
+        page={page}
+        onChange={handleChange}
+        disabled={totalPage===1}
+      />
     </Box>
   );
 };

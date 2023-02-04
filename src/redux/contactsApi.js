@@ -7,14 +7,14 @@ export const getContacts = createAsyncThunk(
     try {
       const state = thunkAPI.getState();
       const filterQuery = state.filter.favorite;
-      const page = state.filter.page;
+      const page = state.contacts.page;
       const options = {
         params: {
           favorite: filterQuery,
           page,
         },
       };
-      const response = await axios.get('/contacts?', (options));
+      const response = await axios.get('/contacts?', options);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
